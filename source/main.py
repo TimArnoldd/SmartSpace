@@ -2,7 +2,7 @@ import cv2
 import pickle
 import cvzone
 import numpy as np
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Polygon
 
 cap = cv2.VideoCapture('source\Ressources\webcam.mp4')
 with open('source\Ressources\CarParkPos', 'rb') as f:
@@ -32,7 +32,11 @@ def checkSpaces():
         masked = cv2.bitwise_and(imgThres, imgThres, mask=mask)
         count = cv2.countNonZero(masked)
 
-        if count < 1000:
+        polygonArea = Polygon(np.squeeze(pos)).area
+
+        count = round(count / polygonArea, 2)
+
+        if count < 0.09:
             color = (0, 200, 0)
             thic = 5
             spaces += 1
