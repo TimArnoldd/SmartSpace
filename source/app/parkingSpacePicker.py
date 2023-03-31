@@ -3,8 +3,8 @@ import pickle
 import numpy
 from shapely.geometry import Point, Polygon
 
-parkPosData = 'source\Ressources\CarParkPos'
-parkPosImage = 'source\Ressources\parkPositions.png'
+parkPosData = 'source\data\CarParkPos'
+parkPosImage = 'source\media\parkPositions.png'
 
 tempCoords = []
 
@@ -21,7 +21,6 @@ def mouseClick(events, x, y, flags, params):
         for i, pos in enumerate(posList):
             polygon = Polygon(numpy.squeeze(pos))
             point = Point(x,y)
-
             if polygon.contains(point):
                 posList.pop(i)
 
@@ -30,7 +29,6 @@ def mouseClick(events, x, y, flags, params):
 
 while True:
     img = cv2.imread(parkPosImage)
-
     if len(tempCoords) > 0:
         for p in tempCoords:
             cv2.circle(img, p, 0, (255, 0, 255), 5)
@@ -47,13 +45,13 @@ while True:
 
     for pos in posList:
         cv2.polylines(img, [pos], True, (255, 0, 255), 2)
-        
-    cv2.namedWindow("ParkingPositionPlacer", cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty("ParkingPositionPlacer", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-    cv2.imshow("ParkingPositionPlacer", img)
+    cv2.namedWindow("ParkingSpacePicker", cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty("ParkingSpacePicker", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-    cv2.setMouseCallback("ParkingPositionPlacer", mouseClick)
+    cv2.imshow("ParkingSpacePicker", img)
+
+    cv2.setMouseCallback("ParkingSpacePicker", mouseClick)
     pressedKey = cv2.waitKey(1)
     if pressedKey == 27: # escape key
         break

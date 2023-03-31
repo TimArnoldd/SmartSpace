@@ -2,16 +2,18 @@ import cv2
 import pickle
 import cvzone
 import numpy as np
+import datetime
+import json
 from shapely.geometry import Polygon
 
-cap = cv2.VideoCapture('source\Ressources\webcam.mp4')
-with open('source\Ressources\CarParkPos', 'rb') as f:
-    posList = pickle.load(f)
+lastTime = datetime.datetime.now()
 
+cap = cv2.VideoCapture('source\media\webcam.mp4')
+with open('source\data\CarParkPos', 'rb') as f:
+    posList = pickle.load(f)
 
 def empty(a):
     pass
-
 
 cv2.namedWindow("Vals")
 cv2.resizeWindow("Vals", 640, 240)
@@ -22,31 +24,28 @@ cv2.setTrackbarMin("Val2", "Vals", 1)
 cv2.createTrackbar("Val3", "Vals", 5, 50, empty)
 cv2.setTrackbarMin("Val3", "Vals", 1)
 
-
 def checkSpaces():
+    global spaces
     spaces = 0
     for pos in posList:
-
         mask = np.zeros((imgThres.shape[0], imgThres.shape[1]), dtype=np.uint8)
         cv2.fillPoly(mask, [pos], 255)
         masked = cv2.bitwise_and(imgThres, imgThres, mask=mask)
         count = cv2.countNonZero(masked)
 
         polygonArea = Polygon(np.squeeze(pos)).area
-
         count = round(count / polygonArea, 2)
 
         if count < 0.09:
             color = (0, 200, 0)
             thic = 5
             spaces += 1
-
         else:
             color = (0, 0, 200)
             thic = 2
-        
+
         cv2.polylines(img, [pos], True, color, thic)
-        
+
         #Sort points so the most upper left is in first position
         points = np.squeeze(pos)
         rect = np.zeros((4, 2), dtype = "float32")
@@ -58,14 +57,11 @@ def checkSpaces():
         rect[3] = points[np.argmax(diff)]
 
         x,y = rect[0]
-        
         cv2.putText(img, str(count), (int(x) + 6, int(y) + 15), cv2.FONT_HERSHEY_PLAIN, 1, color, 2)
 
     cvzone.putTextRect(img, f'Frei: {spaces}/{len(posList)}', (50, 60), thickness=3, offset=20, colorR=(0, 200, 0))
 
-
 while True:
-
     # Get image frame
     success, img = cap.read()
     if cap.get(cv2.CAP_PROP_POS_FRAMES) == cap.get(cv2.CAP_PROP_FRAME_COUNT):
@@ -92,8 +88,19 @@ while True:
     cv2.setWindowProperty("Image", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     cv2.imshow("Image", img)
-    #cv2.imshow("ImageGray", imgThres)
-    #cv2.imshow("ImageBlur", imgBlur)
+    # cv2.imshow("ImageGray", imgThres)
+    # cv2.imshow("ImageBlur", imgBlur)
+
+    period = datetime.datetime.now()
+
+    dictionary = {"free spaces": spaces, "total": len(posList), "used spaces": len(posList) - spaces}
+    
+    if period.second % 1 == 0 and (period - lastTime).total_seconds() >= 1:
+        json_object = json.dumps(dictionary, indent=4)
+        with open("source\data\parkingInformation.json", "w") as outfile:
+            outfile.write(json_object)
+        lastTime = period
+
     pressedKey = cv2.waitKey(1)
     if pressedKey == 27: # escape key
         break
