@@ -1,0 +1,54 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This is a Strassenschild</title>
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        p {
+            position: absolute;
+            top: 23.5vh;
+            left: 69vw;
+            text-align: center;
+            font-size: 1vw;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="..\media\streetSign.png" alt="fancy streetsign">
+    <p id="freeSpaces">000</p>
+    <script>
+        var freeSpaces = document.getElementById("freeSpaces");
+        var totalSpaces = document.getElementById("totalSpaces");
+        var usedSpaces = document.getElementById("usedSpaces");
+        function getCount() {
+            const t1 = new Date();
+            const response = fetch("http://127.0.0.1:8000/")
+                .then((res) => res.json())
+                .then((data) => {
+                    freeSpaces.innerText = data.freeSpaces;
+                    totalSpaces.innerText = data.totalSpaces;
+                    usedSpaces.innerText = data.usedSpaces;
+                });
+        }
+        var intervalID = window.setInterval(getCount, 1000);    
+    </script>
+</body>
+
+</html>
