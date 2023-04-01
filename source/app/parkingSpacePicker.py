@@ -2,9 +2,16 @@ import cv2
 import pickle
 import numpy
 from shapely.geometry import Point, Polygon
+import easygui
 
-parkPosData = 'source\data\CarParkPos'
-parkPosImage = 'source\media\parkPositions.png'
+parkPosData = "source\data\\" + easygui.enterbox("What parking slot file do you want to create/edit?")
+parkPosImage = easygui.fileopenbox(title="Select example image...", filetypes=[["*.png", "*.jpg", "*.jpeg", "Images"]])
+
+if not parkPosData or not parkPosImage:
+    exit()
+
+# parkPosData = 'source\data\CarParkPos'
+# parkPosImage = 'source\media\parkPositions.png'
 
 tempCoords = []
 
