@@ -10,7 +10,15 @@
             overflow: hidden;
         }
 
-        img {
+        #blazon {
+            position: absolute;
+            top: 10;
+            left: 10;
+            width: 10%;
+            box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        #bg {
             position: absolute;
             top: 0;
             left: 0;
@@ -31,7 +39,8 @@
 </head>
 
 <body>
-    <img src="..\media\streetSign.png" alt="fancy streetsign">
+    <img id="bg" src="..\assets\streetSign.png" alt="fancy streetsign">
+    <img id="blazon" src="..\assets\Uri.jpg" alt="uri blazon">
     <p id="freeSpaces">000</p>
     <script>
         var freeSpaces = document.getElementById("freeSpaces");
