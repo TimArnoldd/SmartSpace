@@ -65,7 +65,8 @@ def checkSpaces(parkingSlotFilename):
 
         x,y = rect[0]
         cv2.putText(img, str(count), (int(x) + 6, int(y) + 15), cv2.FONT_HERSHEY_PLAIN, 1, color, 2)
-
+    uri = cv2.imread("source\\assets\\uri.jpg")
+    img[11: 111, img.shape[1]-130: img.shape[1]-30] = cv2.resize(uri, dsize=(100, 100))
     cvzone.putTextRect(img, f'Frei: {spaces}/{len(posList)}', (50, 60), thickness=3, offset=20, colorR=(0, 200, 0))
     return spaces, posList
 
