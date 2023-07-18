@@ -3,8 +3,9 @@ import pickle
 import cvzone
 import numpy as np
 import datetime
-import json
 from shapely.geometry import Polygon
+import datetime
+from db import *
 
 lastTime = datetime.datetime.now()
 
@@ -70,6 +71,7 @@ def checkSpaces(parkingSlotFilename):
     cvzone.putTextRect(img, f'Frei: {spaces}/{len(posList)}', (50, 60), thickness=3, offset=20, colorR=(0, 200, 0))
     return spaces, posList
 
+setup()
 while True:
     i = 0
     spaces = 0
@@ -97,8 +99,8 @@ while True:
         result = checkSpaces(parkingSlotFilenames[i])
         spaces += result[0]
         slots += len(result[1])
+        
         # Display Output
-
         cv2.namedWindow(captureIds[i], cv2.WINDOW_NORMAL)
         cv2.setWindowProperty(captureIds[i], cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
 
@@ -106,16 +108,11 @@ while True:
         #cv2.imshow("ImageGray", imgThres)
         #cv2.imshow("ImageBlur", imgBlur)
         period = datetime.datetime.now()
-
         
         i += 1
         
-    dictionary = {"freeSpaces": spaces, "totalSpaces": slots, "usedSpaces": slots - spaces}
-    
     if period.second % 1 == 0 and (period - lastTime).total_seconds() >= 1:
-        json_object = json.dumps(dictionary, indent=4)
-        with open("source\data\parkingInformation.json", "w") as outfile:
-            outfile.write(json_object)
+        addAvailability(period, spaces, slots - spaces)
         lastTime = period
     pressedKey = cv2.waitKey(1)
     if pressedKey == 27: # escape key
