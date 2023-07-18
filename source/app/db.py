@@ -1,5 +1,5 @@
 import mysql.connector
-import datetime
+from availability import *
 
 
 dbHost = 'localhost'
@@ -20,8 +20,8 @@ def setup():
     sqlCursor.execute('USE smart_space')
     sqlCursor.execute('CREATE TABLE IF NOT EXISTS availability (id INT AUTO_INCREMENT PRIMARY KEY, timestamp DATETIME, freeSlots INT, usedSlots INT)')
 
-def addAvailability(datetime, freeSlots, usedSlots):
-    sqlCursor.execute('INSERT INTO availability (timestamp, freeSlots, usedSlots) VALUES (%s, %s, %s)', (datetime, freeSlots, usedSlots))
+def addAvailability(availability: Availability):
+    sqlCursor.execute('INSERT INTO availability (timestamp, freeSlots, usedSlots) VALUES (%s, %s, %s)', (availability.timestamp, availability.freeSlots, availability.usedSlots))
     db.commit()
 
 setup()

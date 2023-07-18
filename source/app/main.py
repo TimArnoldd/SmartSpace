@@ -112,7 +112,8 @@ while True:
         i += 1
         
     if period.second % 1 == 0 and (period - lastTime).total_seconds() >= 1:
-        addAvailability(period, spaces, slots - spaces)
+        availability = Availability(period, spaces, slots - spaces)
+        addAvailability(availability)
         lastTime = period
     pressedKey = cv2.waitKey(1)
     if pressedKey == 27: # escape key
